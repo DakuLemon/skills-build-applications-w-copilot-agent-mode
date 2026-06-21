@@ -1,10 +1,10 @@
 /**
  * Seed Script for OctoFit Tracker Database
- * 
- * Description: Seed the octofit_db database with test data
- * 
+ *
+ * Seed command description: Seed the octofit_db database with test data
+ *
  * Usage: npm run seed
- * 
+ *
  * This script will:
  * 1. Connect to MongoDB (octofit_db database)
  * 2. Clear existing collections
@@ -12,7 +12,7 @@
  * 4. Log results to console
  */
 
-import { connectDatabase, disconnectDatabase } from '../database';
+import { connectDatabase, disconnectDatabase } from '../config/database';
 import User from '../models/User';
 import Team from '../models/Team';
 import Activity from '../models/Activity';
