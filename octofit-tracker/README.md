@@ -122,11 +122,59 @@ npm start        # Run compiled JavaScript
 - **Backend API**: 8000
 - **MongoDB**: 27017
 
+## API Documentation
+
+Comprehensive API documentation is available in [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) with:
+
+- All endpoint references
+- Request/response examples
+- Error handling
+- Frontend integration examples
+- Codespaces support details
+
+### Available Endpoints
+
+- **Users**: `/api/users` - User management
+- **Teams**: `/api/teams` - Team creation and management
+- **Activities**: `/api/activities` - Activity logging and tracking
+- **Leaderboard**: `/api/leaderboard` - Competitive leaderboard with timeframes
+- **Workouts**: `/api/workouts` - Personalized workout suggestions
+
+### Frontend Integration
+
+Use the API configuration utility in your React components:
+
+```javascript
+import { api } from './api/config';
+
+// Get all users
+const url = api.users.list();
+
+// Get user leaderboard rank
+const rankUrl = api.leaderboard.userRank('user-id');
+
+// Get personalized workouts
+const workoutsUrl = api.workouts.personalized('user-id');
+```
+
+See [frontend/src/api/examples.js](./frontend/src/api/examples.js) for detailed usage examples.
+
+## Codespaces Support
+
+The API automatically detects and supports GitHub Codespaces environments:
+
+- **Local**: `http://localhost:8000/api`
+- **Codespaces**: `https://{CODESPACE_NAME}-8000.app.github.dev/api`
+
+The frontend API configuration automatically handles URL routing based on environment.
+
 ## Next Steps
 
-1. Create API models and routes
-2. Implement authentication
-3. Build frontend components
-4. Add database schemas
-5. Deploy to production
+1. Create API models and database schemas
+2. Implement authentication and authorization
+3. Build React components for each feature
+4. Add comprehensive error handling
+5. Implement data validation
+6. Add unit and integration tests
+7. Deploy to production
 

@@ -3,12 +3,28 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
+// Import routes
+import usersRouter from './routes/users';
+import teamsRouter from './routes/teams';
+import activitiesRouter from './routes/activities';
+import leaderboardRouter from './routes/leaderboard';
+import workoutsRouter from './routes/workouts';
+
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit-tracker';
+
+// Codespaces support - build API URL with Codespace name if available
+const getApiUrl = (): string => {
+  const codespaceName = process.env.CODESPACE_NAME;
+  if (codespaceName) {
+    return `https://${codespaceName}-8000.app.github.dev`;
+  }
+  return `http://localhost:${PORT}`;
+};
 
 // Middleware
 app.use(cors());
@@ -25,13 +41,40 @@ mongoose.connect(MONGODB_URI)
     process.exit(1);
   });
 
-// Basic routes
+// Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'OctoFit Tracker API is running' });
+  res.json({
+    status: 'ok',
+    message: 'OctoFit Tracker API is running',
+    apiUrl: getApiUrl()
+  });
+});
+
+// API Routes
+app.use('/api/users', usersRouter);
+app.use('/api/teams', teamsRouter);
+app.use('/api/activities', activitiesRouter);
+app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/workouts', workoutsRouter);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: `Route ${req.path} not found`
+  });
 });
 
 // Server startup
 app.listen(PORT, () => {
-  console.log(`✓ Server running at http://localhost:${PORT}`);
+  const apiUrl = getApiUrl();
+  console.log(`✓ Server running at ${apiUrl}`);
   console.log(`✓ MongoDB connection: ${MONGODB_URI}`);
+  console.log(`✓ Available routes:`);
+  console.log(`  - GET /api/health`);
+  console.log(`  - GET/POST /api/users`);
+  console.log(`  - GET/POST /api/teams`);
+  console.log(`  - GET/POST /api/activities`);
+  console.log(`  - GET /api/leaderboard`);
+  console.log(`  - GET/POST /api/workouts`);
 });
