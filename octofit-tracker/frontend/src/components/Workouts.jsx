@@ -1,12 +1,16 @@
 import ResourcePage from './ResourcePage.jsx'
 import { api } from '../api/config.js'
 
+const workoutsEndpoint = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/workouts/`
+  : api.workouts.list()
+
 function Workouts() {
   return (
     <ResourcePage
       title="Workouts"
       description="Suggested workouts with difficulty, duration, and estimated calorie burn."
-      endpoint={api.workouts.list}
+      endpoint={() => workoutsEndpoint}
       emptyMessage="No workouts are available yet."
       badges={['GET /api/workouts/']}
       columns={[

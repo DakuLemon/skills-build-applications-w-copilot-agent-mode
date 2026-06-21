@@ -1,6 +1,10 @@
 import ResourcePage from './ResourcePage.jsx'
 import { api } from '../api/config.js'
 
+const usersEndpoint = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/users/`
+  : api.users.list()
+
 function formatDate(value) {
   return value ? new Date(value).toLocaleDateString() : 'N/A'
 }
@@ -10,7 +14,7 @@ function Users() {
     <ResourcePage
       title="Users"
       description="Registered athletes and profile details from the authentication layer."
-      endpoint={api.users.list}
+      endpoint={() => usersEndpoint}
       emptyMessage="No users are available yet."
       badges={['GET /api/users/']}
       columns={[

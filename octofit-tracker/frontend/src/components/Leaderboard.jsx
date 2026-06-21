@@ -1,12 +1,16 @@
 import ResourcePage from './ResourcePage.jsx'
 import { api } from '../api/config.js'
 
+const leaderboardEndpoint = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/leaderboard/`
+  : api.leaderboard.global()
+
 function Leaderboard() {
   return (
     <ResourcePage
       title="Leaderboard"
       description="All-time standings with rank, points, and accumulated performance metrics."
-      endpoint={api.leaderboard.global}
+      endpoint={() => leaderboardEndpoint}
       emptyMessage="Leaderboard entries will appear once scores are calculated."
       badges={['GET /api/leaderboard/']}
       columns={[

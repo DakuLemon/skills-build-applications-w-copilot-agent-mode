@@ -1,12 +1,16 @@
 import ResourcePage from './ResourcePage.jsx'
 import { api } from '../api/config.js'
 
+const teamsEndpoint = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/teams/`
+  : api.teams.list()
+
 function Teams() {
   return (
     <ResourcePage
       title="Teams"
       description="Team rosters, leaders, and descriptions exposed from the collaboration layer."
-      endpoint={api.teams.list}
+      endpoint={() => teamsEndpoint}
       emptyMessage="No teams have been created yet."
       badges={['GET /api/teams/']}
       columns={[

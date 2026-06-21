@@ -1,6 +1,10 @@
 import ResourcePage from './ResourcePage.jsx'
 import { api } from '../api/config.js'
 
+const activitiesEndpoint = import.meta.env.VITE_CODESPACE_NAME
+  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/activities/`
+  : api.activities.list()
+
 function formatDate(value) {
   return value ? new Date(value).toLocaleString() : 'N/A'
 }
@@ -10,7 +14,7 @@ function Activities() {
     <ResourcePage
       title="Activities"
       description="Recent member activity logs pulled from the Express API tier."
-      endpoint={api.activities.list}
+      endpoint={() => activitiesEndpoint}
       emptyMessage="No activities have been logged yet."
       badges={['GET /api/activities/']}
       columns={[
