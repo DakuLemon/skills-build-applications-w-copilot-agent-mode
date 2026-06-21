@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import { connectDatabase } from './database';
 
 // Import routes
 import usersRouter from './routes/users';
@@ -15,7 +15,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit-tracker';
 
 // Codespaces support - build API URL with Codespace name if available
 const getApiUrl = (): string => {
@@ -32,14 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('✓ MongoDB connected successfully');
-  })
-  .catch((error) => {
-    console.error('✗ MongoDB connection error:', error);
-    process.exit(1);
-  });
+connectDatabase();
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -69,7 +61,7 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   const apiUrl = getApiUrl();
   console.log(`✓ Server running at ${apiUrl}`);
-  console.log(`✓ MongoDB connection: ${MONGODB_URI}`);
+  console.log(`✓ MongoDB connection: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db'}`);
   console.log(`✓ Available routes:`);
   console.log(`  - GET /api/health`);
   console.log(`  - GET/POST /api/users`);

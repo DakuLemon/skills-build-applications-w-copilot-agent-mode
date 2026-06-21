@@ -12,25 +12,19 @@
  * 4. Log results to console
  */
 
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import { connectDatabase, disconnectDatabase } from '../database';
 import User from '../models/User';
 import Team from '../models/Team';
 import Activity from '../models/Activity';
 import Leaderboard from '../models/Leaderboard';
 import Workout from '../models/Workout';
 
-dotenv.config();
-
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
-
 async function seed() {
   try {
     console.log('🌱 Seeding the octofit_db database with test data...\n');
 
     // Connect to MongoDB
-    await mongoose.connect(MONGODB_URI);
-    console.log('✓ Connected to MongoDB');
+    await connectDatabase();
 
     // Clear existing data
     console.log('\n📋 Clearing existing collections...');
@@ -366,7 +360,7 @@ async function seed() {
     console.log(`   - Leaderboard entries: ${leaderboardEntries.length}`);
     console.log('\n🚀 You can now use the API endpoints to retrieve this data!');
 
-    await mongoose.connection.close();
+    await disconnectDatabase();
   } catch (error) {
     console.error('❌ Error seeding database:', error);
     process.exit(1);
