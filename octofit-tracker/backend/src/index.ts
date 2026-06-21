@@ -16,17 +16,32 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Codespaces support - build API URL with Codespace name if available
-const getApiUrl = (): string => {
-  const codespaceName = process.env.CODESPACE_NAME;
-  if (codespaceName) {
-    return `https://${codespaceName}-8000.app.github.dev`;
-  }
-  return `http://localhost:${PORT}`;
-};
+// Build API base URL — Codespaces-aware
+const codespaceName = process.env.CODESPACE_NAME;
+const BASE_URL = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : `http://localhost:${PORT}`;
 
-// Middleware
-app.use(cors());
+// CORS — allow both localhost and Codespaces origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  ...(codespaceName
+    ? [`https://${codespaceName}-5173.app.github.dev`]
+    : []),
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -38,7 +53,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     message: 'OctoFit Tracker API is running',
-    apiUrl: getApiUrl()
+    baseUrl: BASE_URL,
+    codespaces: !!codespaceName,
   });
 });
 
@@ -53,20 +69,14 @@ app.use('/api/workouts', workoutsRouter);
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
-    message: `Route ${req.path} not found`
+    message: `Route ${req.path} not found`,
   });
 });
 
 // Server startup
 app.listen(PORT, () => {
-  const apiUrl = getApiUrl();
-  console.log(`✓ Server running at ${apiUrl}`);
-  console.log(`✓ MongoDB connection: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db'}`);
-  console.log(`✓ Available routes:`);
-  console.log(`  - GET /api/health`);
-  console.log(`  - GET/POST /api/users`);
-  console.log(`  - GET/POST /api/teams`);
-  console.log(`  - GET/POST /api/activities`);
-  console.log(`  - GET /api/leaderboard`);
-  console.log(`  - GET/POST /api/workouts`);
+  console.log(`✓ Server running at ${BASE_URL}`);
+  console.log(`✓ Codespaces: ${codespaceName ? `yes (${codespaceName})` : 'no (localhost)'}`);
+  console.log(`✓ MongoDB: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db'}`);
+  console.log(`✓ Routes: /api/health | /api/users | /api/teams | /api/activities | /api/leaderboard | /api/workouts`);
 });
