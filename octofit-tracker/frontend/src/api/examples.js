@@ -224,7 +224,7 @@ export function displayApiUrl() {
  *       <h1>Dashboard</h1>
  *       <h2>Users ({users.length})</h2>
  *       <h2>Leaderboard</h2>
- *       {/* Render leaderboard data */}
+ *       Render leaderboard data here.
  *     </div>
  *   );
  * }
