@@ -14,15 +14,9 @@ import workoutsRouter from './routes/workouts';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8000;
-
-// Build API base URL — Codespaces-aware
-const codespaceName = process.env.CODESPACE_NAME;
-const BASE_URL = codespaceName
-  ? `https://${codespaceName}-8000.app.github.dev`
-  : `http://localhost:${PORT}`;
 
 // CORS — allow both localhost and Codespaces origins
+const codespaceName = process.env.CODESPACE_NAME;
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -53,7 +47,6 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     message: 'OctoFit Tracker API is running',
-    baseUrl: BASE_URL,
     codespaces: !!codespaceName,
   });
 });
@@ -73,10 +66,4 @@ app.use((req, res) => {
   });
 });
 
-// Server startup
-app.listen(PORT, () => {
-  console.log(`✓ Server running at ${BASE_URL}`);
-  console.log(`✓ Codespaces: ${codespaceName ? `yes (${codespaceName})` : 'no (localhost)'}`);
-  console.log(`✓ MongoDB: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db'}`);
-  console.log(`✓ Routes: /api/health | /api/users | /api/teams | /api/activities | /api/leaderboard | /api/workouts`);
-});
+export default app;
